@@ -1,0 +1,30 @@
+version: "3.9"
+services:
+  node-one:    
+    image: nutsfoundation/nuts-node:latest
+    container_name: node-one
+    networks:
+      - fhir-nuts
+    environment:
+      NUTS_CONFIGFILE: /opt/nuts/nuts.yaml
+    ports:
+      - 1323:1323
+      - 5555:5555
+    volumes:
+      - "./one/config/node/nuts.yaml:/opt/nuts/nuts.yaml"
+      - "./one/data/node:/opt/nuts/data"
+  node-two:    
+    image: nutsfoundation/nuts-node:latest
+    container_name: node-two
+    networks:
+      - fhir-nuts
+    environment:
+      NUTS_CONFIGFILE: /opt/nuts/nuts.yaml
+    ports:
+      - 2323:1323
+      - 2555:5555
+    volumes:
+      - "./two/config/node/nuts.yaml:/opt/nuts/nuts.yaml"
+      - "./two/data/node:/opt/nuts/data"
+networks:
+  fhir-nuts:

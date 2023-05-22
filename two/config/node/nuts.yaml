@@ -1,0 +1,14 @@
+datadir: /opt/nuts/data
+strictmode: false
+http:
+  default:
+    address: :1323
+    cors:
+      origin: "*"
+verbosity: debug
+network:
+  enabletls: false
+  bootstrapnodes: node-one:5555
+  disablenodeauthentication: true
+  v2:
+    gossipinterval: 500
