@@ -7,6 +7,7 @@ http:
       origin: "*"
 verbosity: debug
 network:
+  nodedid: did:nuts:B4us4PqDM8K3Q4q5r9ToSBUqSRi8ixbVotPQfk3uTkE5
   enabletls: false
   bootstrapnodes: node-one:5555
   disablenodeauthentication: true

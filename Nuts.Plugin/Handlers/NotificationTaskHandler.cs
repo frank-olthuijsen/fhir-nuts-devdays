@@ -63,8 +63,8 @@ namespace Nuts.Plugin.Handlers
                 }
                 _logger.LogInformation($"Organization DID found in notification task: {notificationTask.Id}");
 
-                // obtain fhir endpoint
-                string? fhirEndpoint = await _nutsClient.GetEndpoint(senderDid, "bgz-sender", "fhir");
+                // obtain the fhir endpoint of the organization that is sending the referral
+                string? fhirEndpoint = await _nutsClient.GetEndpointAsync(senderDid, "bgz-sender", "fhir");
                 if (string.IsNullOrEmpty(fhirEndpoint))
                 {
                     throw new Exception("Unable to obtain fhir endpoint");

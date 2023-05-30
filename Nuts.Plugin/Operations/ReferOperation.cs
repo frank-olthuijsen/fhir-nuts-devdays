@@ -57,13 +57,14 @@ namespace Nuts.Plugin.Operations
                 _logger.LogInformation($"Created authorization credential: {vcDid}");
 
                 // get notification endpoint of the receiver
-                string? notificationEndpoint = await _nutsClient.GetEndpoint(receiverDid, "bgz-receiver", "notification");
+                string? notificationEndpoint = await _nutsClient.GetEndpointAsync(receiverDid, "bgz-receiver", "notification");
                 if (notificationEndpoint == null)
                 {
                     throw new Exception("Unable to retrieve notification endpoint");
                 }
                 _logger.LogInformation($"Retrieved notification endpoint: {notificationEndpoint}");
 
+                // get an access token so we can send the notification task to the receiver
                 string? accessToken = await _nutsClient.GetAccessTokenAsync(receiverDid, senderDid);
                 if (accessToken == null)
                 {
@@ -71,19 +72,20 @@ namespace Nuts.Plugin.Operations
                 }
                 _logger.LogInformation($"Access token obtained: {accessToken}");
                 
-                // get fhir endpoint of the sender
-                string? senderFhirEndpoint = await _nutsClient.GetEndpoint(receiverDid, "bgz-sender", "bgz-sender-fhir");
+                // get the fhir endpoint of the sender
+                string? senderFhirEndpoint = await _nutsClient.GetEndpointAsync(receiverDid, "bgz-sender", "fhir");
                 if (senderFhirEndpoint == null)
                 {
                     throw new Exception("Unable to retrieve FHIR endpoint of sender");
                 }
                 _logger.LogInformation($"Retrieved FHIR endpoint of sender: {senderFhirEndpoint}");
-
                 
+                // create a notification task to send
                 Hl7.Fhir.Model.Task task = CreateNotificationTask(vcDid, senderDid, receiverDid, senderFhirEndpoint);
                 _logger.LogInformation($"Created notification task with id: {task.Id}");
 
-                Hl7.Fhir.Model.Task? result = await SendNotification(notificationEndpoint, accessToken, task);
+                // send the newly created notification task to the notification endpoint (i.e. fhir server) of the organization we are referring to
+                Hl7.Fhir.Model.Task? result = await SendNotificationAsync(notificationEndpoint, accessToken, task);
                 if (result == null)
                 {
                     throw new Exception("Unable to send notification task");
@@ -98,12 +100,10 @@ namespace Nuts.Plugin.Operations
             _ = await Task.FromResult(true);
         }
         
-        private async Task<Hl7.Fhir.Model.Task?> SendNotification(string notificationEndpoint, string accessToken, Hl7.Fhir.Model.Task task)
+        private async Task<Hl7.Fhir.Model.Task?> SendNotificationAsync(string notificationEndpoint, string accessToken, Hl7.Fhir.Model.Task task)
         {
             var fhirClient = new FhirClient(notificationEndpoint);
             
-            //fhirClient.Settings = FhirClientSettings.CreateDefault();
-
             fhirClient.RequestHeaders.Add("Authorization", "Bearer " + accessToken);
        
              return await fhirClient.CreateAsync(task);

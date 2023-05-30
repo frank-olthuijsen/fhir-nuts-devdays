@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Nuts.Plugin.Operations;
 using System.Net.Mime;
 using System.Text;
@@ -9,12 +10,13 @@ namespace Nuts.Plugin
     public class NutsClient
     {
         private readonly ILogger<NutsClient> _logger;
-        private readonly HttpClient HttpClient = new();
+        private readonly HttpClient _httpClient = new();
 
-        public NutsClient(ILogger<NutsClient> logger)
+        public NutsClient(ILogger<NutsClient> logger,
+            IOptions<NutsOptions> nutsOptions)
         {
             _logger = logger;
-            HttpClient.BaseAddress = new Uri("http://localhost:1323"); // TODO: make configurable
+            _httpClient.BaseAddress = new Uri(nutsOptions.Value.NodeUrl); 
         }
 
         public async Task<string> CreateAuthorizationCredentialsAsync(string sender, string receiver, int taskId)
@@ -24,7 +26,7 @@ namespace Nuts.Plugin
             using HttpContent body = new StringContent(searchJson, Encoding.UTF8, MediaTypeNames.Application.Json);
 
             using HttpResponseMessage response =
-                await HttpClient.PostAsync("/internal/vcr/v2/issuer/vc", body);
+                await _httpClient.PostAsync("/internal/vcr/v2/issuer/vc", body);
 
             response.EnsureSuccessStatusCode();
 
@@ -41,7 +43,7 @@ namespace Nuts.Plugin
             using HttpContent body = new StringContent(searchJson, Encoding.UTF8, MediaTypeNames.Application.Json);
 
             using HttpResponseMessage response =
-                await HttpClient.PostAsync("/internal/vcr/v2/search", body);
+                await _httpClient.PostAsync("/internal/vcr/v2/search", body);
 
             response.EnsureSuccessStatusCode();
 
@@ -62,7 +64,7 @@ namespace Nuts.Plugin
             return null;
         }
 
-        public async Task<string?> GetEndpoint(string did, string compoundService, string endpointType)
+        public async Task<string?> GetEndpointAsync(string did, string compoundService, string endpointType)
         {
             if (string.IsNullOrEmpty(did) ||
                 string.IsNullOrEmpty(compoundService) ||
@@ -73,7 +75,7 @@ namespace Nuts.Plugin
 
             string uri = $"/internal/didman/v1/did/{did}/compoundservice/{compoundService}/endpoint/{endpointType}";
 
-            using HttpResponseMessage response = await HttpClient.GetAsync(uri);
+            using HttpResponseMessage response = await _httpClient.GetAsync(uri);
 
             response.EnsureSuccessStatusCode();
 
@@ -92,7 +94,7 @@ namespace Nuts.Plugin
             using HttpContent body = new StringContent(searchJson, Encoding.UTF8, MediaTypeNames.Application.Json);
 
             using HttpResponseMessage response =
-                await HttpClient.PostAsync("/internal/auth/v1/request-access-token", body);
+                await _httpClient.PostAsync("/internal/auth/v1/request-access-token", body);
 
             response.EnsureSuccessStatusCode();
 
@@ -111,7 +113,7 @@ namespace Nuts.Plugin
             using HttpContent body = new StringContent(searchJson, Encoding.UTF8, MediaTypeNames.Application.Json);
 
             using HttpResponseMessage response =
-                await HttpClient.PostAsync("/internal/auth/v1/request-access-token", body);
+                await _httpClient.PostAsync("/internal/auth/v1/request-access-token", body);
 
             response.EnsureSuccessStatusCode();
 
@@ -133,7 +135,7 @@ namespace Nuts.Plugin
             {
                 try
                 {
-                    HttpResponseMessage response = await HttpClient.GetAsync($"/internal/vcr/v2/vc/{vcDid}");
+                    HttpResponseMessage response = await _httpClient.GetAsync($"/internal/vcr/v2/vc/{vcDid}");
                     response.EnsureSuccessStatusCode();
                     return await response.Content.ReadAsStringAsync();
                 }

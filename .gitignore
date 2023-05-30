@@ -3,6 +3,13 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
+/one/data
+/two/data
+/one/config/fhir/firelyserver-license.json
+/two/config/fhir/firelyserver-license.json
+/resources
+/resources_old
+
 # User-specific files
 *.rsuser
 *.suo

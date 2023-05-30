@@ -7,6 +7,7 @@ http:
       origin: "*"
 verbosity: debug
 network:
+  nodedid: did:nuts:3A7h6WS9xgrBzz9q4cw86DMFM2UhLuqoVLoxsH3A38j1
   enabletls: false
   disablenodeauthentication: true
   v2:
