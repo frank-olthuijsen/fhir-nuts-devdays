@@ -113,7 +113,7 @@ namespace Nuts.Plugin
             }
         }
 
-        public async Task<string?> GetAccessToken(string authorizer, string requester, string authorization)
+        public async Task<string?> GetAccessTokenAsync(string authorizer, string requester, string authorization)
         {
             var searchJson = string.Format(ReferTemplates.GET_AT_EX_TEMPLATE, authorizer, requester, authorization);
 
@@ -132,7 +132,7 @@ namespace Nuts.Plugin
             return node?.ToString();
         }
 
-        public async Task<string?> GetVerifiableCredential(string vcDid)
+        public async Task<string?> GetVerifiableCredentialAsync(string vcDid)
         {
             vcDid = vcDid.Replace("#", "%23");
 

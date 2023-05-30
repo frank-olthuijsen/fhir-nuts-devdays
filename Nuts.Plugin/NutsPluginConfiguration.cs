@@ -25,7 +25,7 @@ namespace Nuts.Plugin
         public static IApplicationBuilder Configure(IApplicationBuilder builder)
         {
             builder.OnInteraction(VonkInteraction.all_create).AndResourceTypes(nameof(Task))
-                .PreHandleAsyncWith<NotificationTaskHandler>((svc, context) => svc.Handle(context));
+                .PreHandleAsyncWith<NotificationTaskHandler>((svc, context) => svc.HandleAsync(context));
             
             builder.OnCustomInteraction(VonkInteraction.type_custom, "refer").AndMethod("POST")
                 .AndResourceTypes(nameof(Task)).HandleAsyncWith<ReferOperation>((svc, context) => svc.Execute(context));

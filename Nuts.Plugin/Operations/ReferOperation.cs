@@ -84,7 +84,7 @@ namespace Nuts.Plugin.Operations
                 
                 // create a notification task to send
                 Hl7.Fhir.Model.Task task = CreateNotificationTask(vcDid, senderDid, receiverDid, senderFhirEndpoint);
-                _logger.LogInformation($"Created notification task with id: {task.Id}");
+                _logger.LogInformation($"Created notification task");
 
                 // send the newly created notification task to the notification endpoint (i.e. fhir server) of the organization we are referring to
                 Hl7.Fhir.Model.Task? result = await SendNotificationAsync(notificationEndpoint, accessToken, task);

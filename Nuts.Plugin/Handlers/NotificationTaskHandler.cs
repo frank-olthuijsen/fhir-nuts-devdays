@@ -12,7 +12,6 @@ namespace Nuts.Plugin.Handlers
     internal class NotificationTaskHandler
     {
         private readonly ILogger<NotificationTaskHandler> _logger;
-
         private readonly NutsClient _nutsClient;
         private readonly IOptions<NutsOptions> _nutsOptions;
 
@@ -21,12 +20,11 @@ namespace Nuts.Plugin.Handlers
             IOptions<NutsOptions> nutsOptions)
         {
             _logger = logger;
-            
             _nutsClient = nutsClient;
             _nutsOptions = nutsOptions;
         }
 
-        public async Task Handle(IVonkContext vonkContext)
+        public async Task HandleAsync(IVonkContext vonkContext)
         {
             _logger.LogInformation("Notification task received");
 
@@ -46,13 +44,15 @@ namespace Nuts.Plugin.Handlers
                 //    throw new Exception("Token introspection failed");
                 //    TODO: if this fails, return status code + OO
                 //}
-                
-                // get task
-                Hl7.Fhir.Model.Task notificationTask = vonkContext.Request.Payload.Resource.ToPoco<Hl7.Fhir.Model.Task>();
+
+                // obtain the notification task from the payload
+                Hl7.Fhir.Model.Task notificationTask =
+                    vonkContext.Request.Payload.Resource.ToPoco<Hl7.Fhir.Model.Task>();
                 if (notificationTask == null)
                 {
                     throw new Exception("No notification task provided");
                 }
+
                 _logger.LogInformation($"Received notification task with id: {notificationTask.Id}");
 
                 // obtain the did of the organization that is sending the referral
@@ -61,6 +61,7 @@ namespace Nuts.Plugin.Handlers
                 {
                     throw new Exception("No organization DID found in notification task");
                 }
+
                 _logger.LogInformation($"Organization DID found in notification task: {notificationTask.Id}");
 
                 // obtain the fhir endpoint of the organization that is sending the referral
@@ -69,58 +70,71 @@ namespace Nuts.Plugin.Handlers
                 {
                     throw new Exception("Unable to obtain fhir endpoint");
                 }
+
                 _logger.LogInformation($"Organization FHIR endpoint retrieved: {fhirEndpoint}");
 
-                var basedOn = notificationTask.BasedOn.SingleOrDefault();
+                // get the reference to the associated workflow task
+                ResourceReference? basedOn = notificationTask.BasedOn.SingleOrDefault();
                 if (basedOn == null)
                 {
                     throw new Exception("More than one basedOn specified");
                 }
+
                 _logger.LogInformation($"Workflow task found in notification task: {basedOn}");
 
+                // get the DID of the VC
                 FhirString? vcDid = GetVerifiableCredentialDid(notificationTask);
                 if (vcDid == null)
                 {
                     throw new Exception("Verifiable credential did not found in notification task");
                 }
+
                 _logger.LogInformation($"Verifiable credential did found: {vcDid}");
 
-                // obtain verifiable credential
-                string? vc = await _nutsClient.GetVerifiableCredential(vcDid.Value);
+                // obtain the verifiable credential by its DID
+                string? vc = await _nutsClient.GetVerifiableCredentialAsync(vcDid.Value);
                 if (vc == null)
                 {
                     throw new Exception("Unable to retrieve verifiable credential");
                 }
+
                 _logger.LogInformation($"Verifiable credential retrieved: {vc}");
 
                 // obtain the receiver DID (us) based on its name
-                string? receiverDid = await _nutsClient.GetDidByOrganizationNameAsync(_nutsOptions.Value.OrganizationName);
+                string? receiverDid =
+                    await _nutsClient.GetDidByOrganizationNameAsync(_nutsOptions.Value.OrganizationName);
                 if (receiverDid == null)
                 {
                     throw new Exception("Unable to retrieve receiver DID");
                 }
+
                 _logger.LogInformation($"Retrieved DID {receiverDid} for {_nutsOptions.Value.OrganizationName}");
 
                 // obtain access token
-                string? accessToken = await _nutsClient.GetAccessToken(senderDid, receiverDid, vc);
-                if (string.IsNullOrEmpty(accessToken))
-                {
-                    throw new Exception("Unable to obtain an access token");
-                }
-                _logger.LogInformation($"Access token obtained: {accessToken}");
+                string accessToken = "";
+                _logger.LogWarning("TODO: Implemented retrieval of access token."); // TODO
+                //string? accessToken = await _nutsClient.GetAccessToken(senderDid, receiverDid, vc);
+                //if (string.IsNullOrEmpty(accessToken))
+                //{
+                //    throw new Exception("Unable to obtain an access token");
+                //}
+                //_logger.LogInformation($"Access token obtained: {accessToken}");
 
-                // obtain the workflow task
-                Hl7.Fhir.Model.Task? workflowTask = await GetWorkflowTask(fhirEndpoint, accessToken, basedOn.Reference);
-                if(workflowTask == null) 
-                {
-                    throw new Exception("Unable to retrieve workflow task");
-                }
-                _logger.LogInformation($"Retrieved workflow task with id: {workflowTask.Id}");
-
+                
+                // create a FHIR client for interacting with the FHIR server of the sender
                 var fhirClient = new FhirClient(fhirEndpoint);
                 fhirClient.RequestHeaders.Add("Authorization", "Bearer " + accessToken);
 
-                var transactionBundle = new Bundle{Type = Bundle.BundleType.Transaction};
+                // obtain the actual workflow task from the FHIR server of the sender
+                Hl7.Fhir.Model.Task? workflowTask = await fhirClient.ReadAsync<Hl7.Fhir.Model.Task>(basedOn.Reference);
+                if (workflowTask == null)
+                {
+                    throw new Exception("Unable to retrieve workflow task");
+                }
+
+                _logger.LogInformation($"Retrieved workflow task with id: {workflowTask.Id}");
+                
+                var transactionBundle = new Bundle { Type = Bundle.BundleType.Transaction };
 
                 // retrieve other resources
                 foreach (var input in workflowTask.Input)
@@ -129,10 +143,10 @@ namespace Nuts.Plugin.Handlers
                     {
                         continue;
                     }
-                    
+
                     string search = Uri.UnescapeDataString(value.Value);
-                     
-                    Bundle? resources = await PerformSearch(fhirClient, search);
+
+                    Bundle? resources = await PerformSearchAsync(fhirClient, search);
 
                     if (resources != null)
                     {
@@ -143,7 +157,7 @@ namespace Nuts.Plugin.Handlers
                                 Method = Bundle.HTTPVerb.PUT,
                                 Url = entry.Resource.TypeName
                             };
-                            
+
                             // remove duplicates
                             Bundle.EntryComponent? existing = transactionBundle.Entry.SingleOrDefault(e =>
                                 e.Resource.TypeName == entry.Resource.TypeName
@@ -151,29 +165,27 @@ namespace Nuts.Plugin.Handlers
                             if (existing == null)
                             {
                                 transactionBundle.Entry.Add(entry);
-                                _logger.LogInformation($"Retrieved resource of type {entry.Resource.TypeName} with id: {entry.Resource.Id}");
+                                _logger.LogInformation(
+                                    $"Retrieved resource of type {entry.Resource.TypeName} with id: {entry.Resource.Id}");
                             }
                         }
                     }
-                    
+
                 }
                 
-                //File.WriteAllText(@"C:\tmp\Nuts\transaction.json", transactionBundle.ToJson());
-
                 var selfFhirClient = new FhirClient("http://localhost:4080");
                 await selfFhirClient.TransactionAsync(transactionBundle);
-                // TODO: look at https://firely.atlassian.net/browse/SD-798 for a more elegant implementation
+                
                 _logger.LogInformation($"Successfully stored resources in Firely Server.");
             }
             catch (Exception ex)
             {
                 _logger.LogError($"An error occurred during the handling of the notification task: {ex.Message}");
             }
-
             _ = await Task.FromResult(true);
         }
 
-        private async Task<Bundle?> PerformSearch(FhirClient fhirClient, string search)
+        private async Task<Bundle?> PerformSearchAsync(FhirClient fhirClient, string search)
         {
             List<Resource> resources = new List<Resource>();
 
@@ -215,7 +227,7 @@ namespace Nuts.Plugin.Handlers
             return null;
         }
 
-        private async Task<bool> IntrospectToken(object token)
+        private async Task<bool> IntrospectTokenAsync(object token)
         {
             // TODO: implement
             return _ = await Task.FromResult(true);
@@ -223,25 +235,10 @@ namespace Nuts.Plugin.Handlers
 
         private string? GetToken(IVonkContext vonkContext)
         {
-            // Opmerking van Wouter:
-            // Een TCP forward op ngrok voor de OAuth server endpoint, http endpoint registreren in document ipv https
-
-            // get access token from request
-            //var claimsValue = vonkContext.HttpContext().User?.Claims?.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
-            //var userId = claimsValue ?? "unknown";
-            //var username = vonkContext.HttpContext().User?.Identity?.Name;
-
             string bearer = vonkContext.HttpContext().Request.Headers[HeaderNames.Authorization].ToString()
                 .Replace("Bearer ", "");
 
             return bearer;
-        }
-
-        private async Task<Hl7.Fhir.Model.Task?> GetWorkflowTask(string fhirEndpoint, string accessToken, string resourceReference)
-        {
-            var fhirClient = new FhirClient(fhirEndpoint);
-            fhirClient.RequestHeaders.Add("Authorization", "Bearer " + accessToken);
-            return await fhirClient.ReadAsync<Hl7.Fhir.Model.Task>(resourceReference);
         }
     }
 }
