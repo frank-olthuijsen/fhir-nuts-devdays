@@ -32,7 +32,7 @@ namespace Nuts.Plugin.Operations
                 // the name of the organization that is receiving the referral should be supplied as an HTTP header
                 string receiverName = vonkContext.HttpContext().Request.Headers["Receiver"];
 
-                // obtain the sender DID based on its name
+                // obtain the sender DID (us) based on its name
                 string? senderDid = await _nutsClient.GetDidByOrganizationNameAsync(_nutsOptions.Value.OrganizationName);
                 if (senderDid == null)
                 {
@@ -75,7 +75,7 @@ namespace Nuts.Plugin.Operations
                 //_logger.LogInformation($"Access token obtained: {accessToken}");
 
                 // get the fhir endpoint of the sender
-                string? senderFhirEndpoint = await _nutsClient.GetEndpointAsync(receiverDid, "bgz-sender", "fhir");
+                string? senderFhirEndpoint = await _nutsClient.GetEndpointAsync(receiverDid, "bgz-sender", "fhir"); // TODO: check
                 if (senderFhirEndpoint == null)
                 {
                     throw new Exception("Unable to retrieve FHIR endpoint of sender");

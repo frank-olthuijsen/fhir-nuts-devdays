@@ -1,18 +1,16 @@
 ﻿{
   "Serilog": {
+    "Using": [
+      "Firely.Server"
+    ],
     "MinimumLevel": {
-      "Default": "Information",
+      "Default": "Error",
       "Override": {
         "Vonk.Server": "Information",
         "Vonk.Core.Pluggability": "Information",
-        "Vonk.Core.Pluggability.IModelBuilder": "Information",
         "Vonk.Core.Licensing": "Information",
         "Vonk.Administration.Api.Import": "Information",
         "Vonk.Repository.Generic": "Information",
-        "Vonk.Repository.Sql.Raw": "Information", // Enable this to log SQL statements for Firely Server 4.3.0 and above and if "Vonk.Repository.Sql.Raw.KSearchConfiguration" is enabled in the pipeline
-        "Vonk.Repository.Document.Db": "Information", //Enable this to log MongoDB statements and dependency times in Azure Application Insights
-        "Vonk.Repository.Sql.Raw.Maintenance": "Information",
-        //"Vonk.Repository.Sql": "Verbose", // Enable this to log SQL statements for Firely Server 4.2.0 and below or Firely Server 4.3.0 and above where "Vonk.Repository.Sql.SqlVonkConfiguration" is still enabled in the pipeline
         "Vonk": "Warning",
         "Nuts.Plugin.NutsPluginConfiguration": "Information"
       }

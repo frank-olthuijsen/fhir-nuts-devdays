@@ -173,7 +173,7 @@ namespace Nuts.Plugin.Handlers
 
                 }
                 
-                var selfFhirClient = new FhirClient("http://localhost:4080");
+                var selfFhirClient = new FhirClient("http://localhost:4081");
                 await selfFhirClient.TransactionAsync(transactionBundle);
                 
                 _logger.LogInformation($"Successfully stored resources in Firely Server.");
