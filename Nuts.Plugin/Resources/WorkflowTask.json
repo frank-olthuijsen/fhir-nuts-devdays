@@ -1,0 +1,59 @@
+{
+    "resourceType": "Task",
+    "id": "eb73e02a-3bd0-46f6-a66d-b0ecb7720d47",
+    "meta": {
+        "profile": [
+            "http://nictiz.nl/fhir/StructureDefinition/BgZ-verwijzing-Task"
+        ]
+    },
+    "intent": "proposal",
+    "status": "requested",
+    "code": {
+        "coding": [
+            {
+                "system": "http://nuts.nl/fhir/CodeSystem/TaskParameterType",
+                "code": "bgz-workflow-task"
+            },
+            {
+                "system": "http://snomed.info/sct",
+                "code": "3457005",
+                "display": "verwijzen van patiënt "
+            }
+        ]
+    },
+    "for": {
+        "reference": "Patient/2cc418c5-8871-4702-8bce-066bf1f55c4f",
+        "display": "M van XXX_Hondius"
+    },
+    "owner": {
+        "reference": "Practitioner/9ab0df70-71c3-40b1-a5f7-7a8351928bf7"
+    },
+    "input": [
+        {
+            "type": {
+                "coding": [
+                    {
+                        "system": "http://loinc.org",
+                        "code": "79191-3",
+                        "display": "Patient demographics panel"
+                    }
+                ],
+                "text": "Demografie en identificatie"
+            },
+            "valueString": "Patient?_include=Patient%3Ageneral-practitioner"
+        },
+        {
+            "type": {
+                "coding": [
+                    {
+                        "system": "http://snomed.info/sct",
+                        "code": "228273003",
+                        "display": "Finding relating to alcohol drinking behavior"
+                    }
+                ],
+                "text": "Alcoholgebruik"
+            },
+            "valueString": "Observation?code=http%3A%2F%2Fsnomed.info%2Fsct%7C228273003"
+        }
+    ]
+}
