@@ -65,13 +65,15 @@ namespace Nuts.Plugin.Operations
                 _logger.LogInformation($"Retrieved notification endpoint: {notificationEndpoint}");
 
                 // get an access token so we can send the notification task to the receiver
-                string? accessToken = await _nutsClient.GetAccessTokenAsync(receiverDid, senderDid);
-                if (accessToken == null)
-                {
-                    throw new Exception("Unable to obtain access token");
-                }
-                _logger.LogInformation($"Access token obtained: {accessToken}");
-                
+                string accessToken = "";
+                _logger.LogWarning("TODO: Implemented retrieval of access token."); // TODO
+                //string? accessToken = await _nutsClient.GetAccessTokenAsync(receiverDid, senderDid);
+                //if (accessToken == null)
+                //{
+                //    throw new Exception("Unable to obtain access token");
+                //}
+                //_logger.LogInformation($"Access token obtained: {accessToken}");
+
                 // get the fhir endpoint of the sender
                 string? senderFhirEndpoint = await _nutsClient.GetEndpointAsync(receiverDid, "bgz-sender", "fhir");
                 if (senderFhirEndpoint == null)

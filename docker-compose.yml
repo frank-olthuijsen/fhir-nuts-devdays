@@ -26,18 +26,18 @@ services:
     volumes:
       - "./two/config/node/nuts.yaml:/opt/nuts/nuts.yaml"
       - "./two/data/node:/opt/nuts/data"
-  # fhir-one:
-  #   image: firely/server:5.0.0
-  #   container_name: fhir-one
-  #   ports:
-  #     - "4080:4080"
-  #   volumes:
-  #     - ./one/config/fhir/firelyserver-license.json:/app/firelyserver-license.json
-  #     - ./one/config/fhir/appsettings.instance.json:/app/appsettings.instance.json
-  #     - ./one/config/fhir/logsettings.instance.json:/app/logsettings.instance.json
-  #     - ./one/config/fhir/plugins/:/app/plugins/
-  #   networks:
-  #     - "fhir-nuts"
+  fhir-one:
+    image: firely/server:5.0.0
+    container_name: fhir-one
+    ports:
+      - "4080:4080"
+    volumes:
+      - ./one/config/fhir/firelyserver-license.json:/app/firelyserver-license.json
+      - ./one/config/fhir/appsettings.instance.json:/app/appsettings.instance.json
+      - ./one/config/fhir/logsettings.instance.json:/app/logsettings.instance.json
+      - ./shared/fhir/plugins/:/app/plugins/
+    networks:
+      - "fhir-nuts"
   fhir-two:
     image: firely/server:5.0.0
     container_name: fhir-two
@@ -47,7 +47,7 @@ services:
       - ./two/config/fhir/firelyserver-license.json:/app/firelyserver-license.json
       - ./two/config/fhir/appsettings.instance.json:/app/appsettings.instance.json
       - ./two/config/fhir/logsettings.instance.json:/app/logsettings.instance.json
-      - ./two/config/fhir/plugins/:/app/plugins/
+      - ./shared/fhir/plugins/:/app/plugins/
     networks:
       - "fhir-nuts"
   seq:

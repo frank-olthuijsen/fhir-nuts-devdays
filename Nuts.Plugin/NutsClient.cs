@@ -90,20 +90,27 @@ namespace Nuts.Plugin
         public async Task<string?> GetAccessTokenAsync(string authorizer, string requester)
         {
             var searchJson = string.Format(ReferTemplates.GET_AT_TEMPLATE, authorizer, requester);
+            try
+            {
+                using HttpContent body = new StringContent(searchJson, Encoding.UTF8, MediaTypeNames.Application.Json);
 
-            using HttpContent body = new StringContent(searchJson, Encoding.UTF8, MediaTypeNames.Application.Json);
+                using HttpResponseMessage response =
+                    await _httpClient.PostAsync("/internal/auth/v1/request-access-token", body);
 
-            using HttpResponseMessage response =
-                await _httpClient.PostAsync("/internal/auth/v1/request-access-token", body);
+                response.EnsureSuccessStatusCode();
 
-            response.EnsureSuccessStatusCode();
+                string content = await response.Content.ReadAsStringAsync();
 
-            string content = await response.Content.ReadAsStringAsync();
+                var jsonContent = JsonNode.Parse(content);
+                JsonNode? node = jsonContent["access_token"];
 
-            var jsonContent = JsonNode.Parse(content);
-            JsonNode? node = jsonContent["access_token"];
-
-            return node?.ToString();
+                return node?.ToString();
+            }
+            catch (Exception e)
+            {
+               _logger.LogCritical($"Unable to obtain an access token. Node: {_httpClient.BaseAddress}. Body: {searchJson}. Exception: {e.Message}.");
+               throw;
+            }
         }
 
         public async Task<string?> GetAccessToken(string authorizer, string requester, string authorization)
