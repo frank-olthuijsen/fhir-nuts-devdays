@@ -27,7 +27,7 @@ services:
       - "./two/config/node/nuts.yaml:/opt/nuts/nuts.yaml"
       - "./two/data/node:/opt/nuts/data"
   fhir-one:
-    image: firely/server:latest
+    image: firely/server:5.0.0
     container_name: fhir-one
     ports:
       - "4080:4080"
@@ -39,7 +39,7 @@ services:
     networks:
       - "fhir-nuts"
   fhir-two:
-    image: firely/server:latest
+    image: firely/server:5.0.0
     container_name: fhir-two
     ports:
       - "4081:4080"

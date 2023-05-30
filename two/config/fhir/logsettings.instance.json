@@ -1,3 +1,51 @@
-{
-    
+﻿{
+  "Serilog": {
+    "MinimumLevel": {
+      "Default": "Information",
+      "Override": {
+        "Vonk.Server": "Information",
+        "Vonk.Core.Pluggability": "Information",
+        "Vonk.Core.Pluggability.IModelBuilder": "Information",
+        "Vonk.Core.Licensing": "Information",
+        "Vonk.Administration.Api.Import": "Information",
+        "Vonk.Repository.Generic": "Information",
+        "Vonk.Repository.Sql.Raw": "Verbose", // Enable this to log SQL statements for Firely Server 4.3.0 and above and if "Vonk.Repository.Sql.Raw.KSearchConfiguration" is enabled in the pipeline
+        "Vonk.Repository.Document.Db": "Verbose", //Enable this to log MongoDB statements and dependency times in Azure Application Insights
+        "Vonk.Repository.Sql.Raw.Maintenance": "Information",
+        //"Vonk.Repository.Sql": "Verbose", // Enable this to log SQL statements for Firely Server 4.2.0 and below or Firely Server 4.3.0 and above where "Vonk.Repository.Sql.SqlVonkConfiguration" is still enabled in the pipeline
+        "Vonk": "Warning"
+      }
+    },
+    "WriteTo": [
+      {
+        "Name": "Seq",
+        "Args": {
+          "serverUrl": "http://seq:5341",
+          "restrictedToMinimumLevel": "Verbose"
+        }
+      },
+      {
+        "Name": "Async",
+        "Args": {
+          "configure": [
+            {
+              "Name": "Console",
+              "Args": {
+                "restrictedToMinimumLevel": "Information",
+                "outputTemplate": "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [ReqId: {RequestId}] [{SourceContext}] {Message}{NewLine}{Exception}"
+              }
+            }
+          ]
+        }
+      }
+    ],
+    "Enrich": [
+      "FromLogContext",
+      "WithMachineName"
+    ],
+    "Properties": {
+      "Application": "Firely Server",
+      "Environment": "Development"
+    }
+  }
 }
