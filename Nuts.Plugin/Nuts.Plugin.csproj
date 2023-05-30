@@ -13,10 +13,4 @@
     <PackageReference Include="Vonk.Fhir.R3" Version="5.0.0" />
   </ItemGroup>
 
-  <ItemGroup>
-    <None Update="Resources\Parsek-WorkflowTask.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-
 </Project>
