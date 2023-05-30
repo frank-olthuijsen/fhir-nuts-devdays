@@ -26,5 +26,44 @@ services:
     volumes:
       - "./two/config/node/nuts.yaml:/opt/nuts/nuts.yaml"
       - "./two/data/node:/opt/nuts/data"
+  fhir-one:
+    image: firely/server:latest
+    container_name: fhir-one
+    ports:
+      - "4080:4080"
+    volumes:
+      - ./one/config/fhir/firelyserver-license.json:/app/firelyserver-license.json
+      - ./one/config/fhir/appsettings.instance.json:/app/appsettings.instance.json
+      - ./one/config/fhir/logsettings.instance.json:/app/logsettings.instance.json
+      - ./one/config/fhir/plugins/:/app/plugins/
+    networks:
+      - "fhir-nuts"
+  fhir-two:
+    image: firely/server:latest
+    container_name: fhir-two
+    ports:
+      - "4081:4080"
+    volumes:
+      - ./two/config/fhir/firelyserver-license.json:/app/firelyserver-license.json
+      - ./two/config/fhir/appsettings.instance.json:/app/appsettings.instance.json
+      - ./two/config/fhir/logsettings.instance.json:/app/logsettings.instance.json
+      - ./two/config/fhir/plugins/:/app/plugins/
+    networks:
+      - "fhir-nuts"      
+  seq:
+    image: datalust/seq
+    container_name: seq
+    ports:
+      - "8081:80"
+      - "5341:5341"
+    environment:
+      - ACCEPT_EULA=Y
+      - SEQ_FIRSTRUN_ADMINPASSWORDHASH=FKPPttXNciL8WEbCRot8IXDsGaYreDBRqX7qVdX+kDv0bCpg/g==   # --> 'password'
+    networks:
+      - "fhir-nuts"
+    deploy:
+      resources:
+        limits:
+          memory: 512M      
 networks:
   fhir-nuts:
