@@ -43,7 +43,7 @@
       "WithMachineName"
     ],
     "Properties": {
-      "Application": "Firely Server",
+      "Application": "fhir-one",
       "Environment": "Development"
     }
   }

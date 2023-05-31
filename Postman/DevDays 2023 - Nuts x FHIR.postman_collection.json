@@ -1,0 +1,595 @@
+{
+	"info": {
+		"_postman_id": "288c4c6d-f5a2-4d96-b039-1c66ac6b23e9",
+		"name": "DevDays 2023 - Nuts x FHIR",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "4572035"
+	},
+	"item": [
+		{
+			"name": "2. Vendor setup",
+			"item": [
+				{
+					"name": "A1. Create a vendor DID",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{NODEBASE}}/internal/vdr/v1/did",
+							"host": [
+								"{{NODEBASE}}"
+							],
+							"path": [
+								"internal",
+								"vdr",
+								"v1",
+								"did"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "A4. Add contact information to the vendor DID",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"{{VENDORNAME}}\",\n    \"phone\": \"06-12345678\",\n    \"email\": \"admin@{{NODENAME}}.com\",\n    \"website\": \"https://{{NODENAME}}.com\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{NODEBASE}}/internal/didman/v1/did/{{VENDORDID}}/contactinfo",
+							"host": [
+								"{{NODEBASE}}"
+							],
+							"path": [
+								"internal",
+								"didman",
+								"v1",
+								"did",
+								"{{VENDORDID}}",
+								"contactinfo"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "B1. Add a NutsComm service to the vendor DID",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"type\": \"NutsComm\",\n    \"endpoint\": \"grpc://{{NODENAME}}:5555\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{NODEBASE}}/internal/didman/v1/did/{{VENDORDID}}/endpoint",
+							"host": [
+								"{{NODEBASE}}"
+							],
+							"path": [
+								"internal",
+								"didman",
+								"v1",
+								"did",
+								"{{VENDORDID}}",
+								"endpoint"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "B2. Add a FHIR service to the vendor DID",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"type\": \"fhir-server\",\n    \"endpoint\": \"http://{{FHIRNAME}}:4080\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{NODEBASE}}/internal/didman/v1/did/{{VENDORDID}}/endpoint",
+							"host": [
+								"{{NODEBASE}}"
+							],
+							"path": [
+								"internal",
+								"didman",
+								"v1",
+								"did",
+								"{{VENDORDID}}",
+								"endpoint"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "B3. Add an OAuth service to the vendor DID",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"type\": \"production-oauth\",\n    \"endpoint\": \"https://{{NODENAME}}:1323/n2n/auth/v1/accesstoken\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{NODEBASE}}/internal/didman/v1/did/{{VENDORDID}}/endpoint",
+							"host": [
+								"{{NODEBASE}}"
+							],
+							"path": [
+								"internal",
+								"didman",
+								"v1",
+								"did",
+								"{{VENDORDID}}",
+								"endpoint"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "x. Check vendor DID contents",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{NODEBASE}}/internal/vdr/v1/did/{{VENDORDID}}",
+							"host": [
+								"{{NODEBASE}}"
+							],
+							"path": [
+								"internal",
+								"vdr",
+								"v1",
+								"did",
+								"{{VENDORDID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "y. Delete (NutsComm) service",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{NODEBASE}}/internal/didman/v1/did/{{VENDORDID}}/endpoint/NutsComm",
+							"host": [
+								"{{NODEBASE}}"
+							],
+							"path": [
+								"internal",
+								"didman",
+								"v1",
+								"did",
+								"{{VENDORDID}}",
+								"endpoint",
+								"NutsComm"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "z. List untrusted vendors",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{NODEBASE}}/internal/vcr/v2/verifier/NutsOrganizationCredential/untrusted",
+							"host": [
+								"{{NODEBASE}}"
+							],
+							"path": [
+								"internal",
+								"vcr",
+								"v2",
+								"verifier",
+								"NutsOrganizationCredential",
+								"untrusted"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "3. Organization setup",
+			"item": [
+				{
+					"name": "C1. Create an organization DID",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"selfControl\": false,\n    \"controllers\": [\"{{VENDORDID}}\"],\n    \"assertionMethod\": true,\n    \"capabilityInvocation\": false\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{NODEBASE}}/internal/vdr/v1/did",
+							"host": [
+								"{{NODEBASE}}"
+							],
+							"path": [
+								"internal",
+								"vdr",
+								"v1",
+								"did"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "D1. Issue an organization credential",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"type\": \"NutsOrganizationCredential\",\n    \"issuer\": \"{{VENDORDID}}\", \n    \"credentialSubject\": {\n        \"id\": \"{{CUSTOMERDID}}\", \n        \"organization\": {\n            \"name\": \"{{CUSTOMERNAME}}\",\n            \"city\": \"{{CUSTOMERCITY}}\"\n        }\n    },\n    \"visibility\": \"public\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{NODEBASE}}/internal/vcr/v2/issuer/vc",
+							"host": [
+								"{{NODEBASE}}"
+							],
+							"path": [
+								"internal",
+								"vcr",
+								"v2",
+								"issuer",
+								"vc"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "E1. Connect to vendor NutsComm",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"type\": \"NutsComm\",\n    \"endpoint\": \"{{VENDORDID}}/serviceEndpoint?type=NutsComm\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{NODEBASE}}/internal/didman/v1/did/{{CUSTOMERDID}}/endpoint",
+							"host": [
+								"{{NODEBASE}}"
+							],
+							"path": [
+								"internal",
+								"didman",
+								"v1",
+								"did",
+								"{{CUSTOMERDID}}",
+								"endpoint"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "F1. Enabling a bolt: bgz-sender",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"type\": \"bgz-sender\",\n    \"serviceEndpoint\": {\n        \"oauth\": \"{{VENDORDID}}/serviceEndpoint?type=production-oauth\",\n        \"fhir\": \"{{VENDORDID}}/serviceEndpoint?type=fhir-server\"\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{NODEBASE}}/internal/didman/v1/did/{{CUSTOMERDID}}/compoundservice",
+							"host": [
+								"{{NODEBASE}}"
+							],
+							"path": [
+								"internal",
+								"didman",
+								"v1",
+								"did",
+								"{{CUSTOMERDID}}",
+								"compoundservice"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "F2. Enabling a bolt: bgz-receiver",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"type\": \"bgz-receiver\",\n    \"serviceEndpoint\": {\n        \"oauth\": \"{{VENDORDID}}/serviceEndpoint?type=production-oauth\",\n        \"notification\": \"{{VENDORDID}}/serviceEndpoint?type=fhir-server\"\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{NODEBASE}}/internal/didman/v1/did/{{CUSTOMERDID}}/compoundservice",
+							"host": [
+								"{{NODEBASE}}"
+							],
+							"path": [
+								"internal",
+								"didman",
+								"v1",
+								"did",
+								"{{CUSTOMERDID}}",
+								"compoundservice"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "G1. List untrusted vendors",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{NODEBASE}}/internal/vcr/v2/verifier/NutsOrganizationCredential/untrusted",
+							"host": [
+								"{{NODEBASE}}"
+							],
+							"path": [
+								"internal",
+								"vcr",
+								"v2",
+								"verifier",
+								"NutsOrganizationCredential",
+								"untrusted"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "G2. Trust the other vendor",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"issuer\": \"FILL-IN-THE-DID-OF-THE-OTHER-VENDOR\",\n    \"credentialType\": \"NutsOrganizationCredential\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{NODEBASE}}/internal/vcr/v2/verifier/trust",
+							"host": [
+								"{{NODEBASE}}"
+							],
+							"path": [
+								"internal",
+								"vcr",
+								"v2",
+								"verifier",
+								"trust"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "x. Check customer DID contents",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{NODEBASE}}/internal/vdr/v1/did/{{CUSTOMERDID}}",
+							"host": [
+								"{{NODEBASE}}"
+							],
+							"path": [
+								"internal",
+								"vdr",
+								"v1",
+								"did",
+								"{{CUSTOMERDID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "y. Search for organization credentials",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"query\": {\n        \"@context\": [\n            \"https://www.w3.org/2018/credentials/v1\",\n            \"https://nuts.nl/credentials/v1\"\n        ],\n        \"type\": [\n            \"VerifiableCredential\",\n            \"NutsOrganizationCredential\"\n        ],\n        \"credentialSubject\": {\n            \"organization\": {\n                \"name\": \"{{CUSTOMERNAME}}\",\n                \"city\": \"{{CUSTOMERCITY}}\"\n            }\n        }\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{NODEBASE}}/internal/vcr/v2/search",
+							"host": [
+								"{{NODEBASE}}"
+							],
+							"path": [
+								"internal",
+								"vcr",
+								"v2",
+								"search"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "z. Search for organization by name",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{NODEBASE}}/internal/didman/v1/search/organizations?query={{CUSTOMERNAME}}",
+							"host": [
+								"{{NODEBASE}}"
+							],
+							"path": [
+								"internal",
+								"didman",
+								"v1",
+								"search",
+								"organizations"
+							],
+							"query": [
+								{
+									"key": "query",
+									"value": "{{CUSTOMERNAME}}"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "4. FHIR setup",
+			"item": [
+				{
+					"name": "1. Load resources",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"resourceType\": \"Bundle\",\r\n    \"type\": \"transaction\",\r\n    \"entry\": [\r\n        {\r\n            \"resource\": {\r\n                \"resourceType\": \"Patient\",\r\n                \"id\": \"1\",\r\n                \"name\": [\r\n                    {\r\n                        \"family\": \"Doe\",\r\n                        \"given\": [\r\n                            \"John\"\r\n                        ]\r\n                    }\r\n                ],\r\n                \"generalPractitioner\": [\r\n                    {\r\n                        \"reference\": \"Practitioner/2\"\r\n                    }\r\n                ]\r\n            },\r\n            \"request\": {\r\n                \"method\": \"PUT\",\r\n                \"url\": \"Patient/1\"\r\n            }\r\n        },\r\n        {\r\n            \"resource\": {\r\n                \"resourceType\": \"Practitioner\",\r\n                \"id\": \"2\",\r\n                \"name\": [\r\n                    {\r\n                        \"family\": \"Careful\",\r\n                        \"given\": [\r\n                            \"Adam\"\r\n                        ],\r\n                        \"prefix\": [\r\n                            \"Dr\"\r\n                        ]\r\n                    }\r\n                ]\r\n            },\r\n            \"request\": {\r\n                \"method\": \"PUT\",\r\n                \"url\": \"Practitioner/2\"\r\n            }\r\n        },\r\n        {\r\n            \"resource\": {\r\n                \"resourceType\": \"Observation\",\r\n                \"id\": \"3\",\r\n                \"status\": \"final\",\r\n                \"code\": {\r\n                    \"coding\": [\r\n                        {\r\n                            \"system\": \"http://snomed.info/sct\",\r\n                            \"code\": \"228273003\",\r\n                            \"display\": \"Finding relating to alcohol drinking behavior (finding)\"\r\n                        }\r\n                    ]\r\n                },\r\n                \"subject\": {\r\n                    \"reference\": \"Patient/1\",\r\n                    \"display\": \"John Doe\"\r\n                },\r\n                \"effectivePeriod\": {\r\n                    \"start\": \"1980\"\r\n                },\r\n                \"valueCodeableConcept\": {\r\n                    \"coding\": [\r\n                        {\r\n                            \"system\": \"http://snomed.info/sct\",\r\n                            \"code\": \"219006\",\r\n                            \"display\": \"Current drinker of alcohol\"\r\n                        }\r\n                    ]\r\n                },\r\n                \"component\": [\r\n                    {\r\n                        \"code\": {\r\n                            \"coding\": [\r\n                                {\r\n                                    \"system\": \"http://snomed.info/sct\",\r\n                                    \"code\": \"160573003\",\r\n                                    \"display\": \"Alcohol intake (observable entity)\"\r\n                                }\r\n                            ]\r\n                        },\r\n                        \"valueQuantity\": {\r\n                            \"value\": 4,\r\n                            \"unit\": \"glasses per week\",\r\n                            \"system\": \"http://unitsofmeasure.org\",\r\n                            \"code\": \"{glasses}/wk\"\r\n                        }\r\n                    }\r\n                ]\r\n            },\r\n            \"request\": {\r\n                \"method\": \"PUT\",\r\n                \"url\": \"Observation/3\"\r\n            }\r\n        }\r\n    ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{FHIRBASE}}",
+							"host": [
+								"{{FHIRBASE}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "2. Create workflow Task",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"resourceType\": \"Task\",\r\n    \"id\": \"eb73e02a-3bd0-46f6-a66d-b0ecb7720d47\",\r\n    \"meta\": {\r\n        \"profile\": [\r\n            \"http://nictiz.nl/fhir/StructureDefinition/BgZ-verwijzing-Task\"\r\n        ]\r\n    },\r\n    \"intent\": \"proposal\",\r\n    \"status\": \"requested\",\r\n    \"code\": {\r\n        \"coding\": [\r\n            {\r\n                \"system\": \"http://nuts.nl/fhir/CodeSystem/TaskParameterType\",\r\n                \"code\": \"bgz-workflow-task\"\r\n            },\r\n            {\r\n                \"system\": \"http://snomed.info/sct\",\r\n                \"code\": \"3457005\",\r\n                \"display\": \"verwijzen van patiënt \"\r\n            }\r\n        ]\r\n    },\r\n    \"for\": {\r\n        \"reference\": \"Patient/1\",\r\n        \"display\": \"John Doe\"\r\n    },\r\n    \"owner\": {\r\n        \"reference\": \"Practitioner/2\"\r\n    },\r\n    \"input\": [\r\n        {\r\n            \"type\": {\r\n                \"coding\": [\r\n                    {\r\n                        \"system\": \"http://loinc.org\",\r\n                        \"code\": \"79191-3\",\r\n                        \"display\": \"Patient demographics panel\"\r\n                    }\r\n                ],\r\n                \"text\": \"Demografie en identificatie\"\r\n            },\r\n            \"valueString\": \"Patient?_include=Patient%3Ageneral-practitioner\"\r\n        },\r\n        {\r\n            \"type\": {\r\n                \"coding\": [\r\n                    {\r\n                        \"system\": \"http://snomed.info/sct\",\r\n                        \"code\": \"228273003\",\r\n                        \"display\": \"Finding relating to alcohol drinking behavior\"\r\n                    }\r\n                ],\r\n                \"text\": \"Alcoholgebruik\"\r\n            },\r\n            \"valueString\": \"Observation?code=http%3A%2F%2Fsnomed.info%2Fsct%7C228273003\"\r\n        }\r\n    ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{FHIRBASE}}/Task/eb73e02a-3bd0-46f6-a66d-b0ecb7720d47",
+							"host": [
+								"{{FHIRBASE}}"
+							],
+							"path": [
+								"Task",
+								"eb73e02a-3bd0-46f6-a66d-b0ecb7720d47"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "5. Flow",
+			"item": [
+				{
+					"name": "1. Send out referral notification",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Receiver",
+								"value": "{{RECEIVERNAME}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{FHIRBASE}}/Task/$refer",
+							"host": [
+								"{{FHIRBASE}}"
+							],
+							"path": [
+								"Task",
+								"$refer"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

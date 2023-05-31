@@ -33,8 +33,8 @@ services:
       - "4080:4080"
     volumes:
       - ./one/config/fhir/appsettings.instance.json:/app/appsettings.instance.json
-      - ./shared/config/fhir/firelyserver-license.json:/app/firelyserver-license.json
-      - ./shared/config/fhir/logsettings.instance.json:/app/logsettings.instance.json
+      - ./one/config/fhir/logsettings.instance.json:/app/logsettings.instance.json
+      - ./shared/config/fhir/firelyserver-license.json:/app/firelyserver-license.json      
       - ./shared/config/fhir/plugins/:/app/plugins/
     networks:
       - "fhir-nuts"
@@ -45,8 +45,8 @@ services:
       - "4081:4080"
     volumes:
       - ./two/config/fhir/appsettings.instance.json:/app/appsettings.instance.json
-      - ./shared/config/fhir/firelyserver-license.json:/app/firelyserver-license.json
-      - ./shared/config/fhir/logsettings.instance.json:/app/logsettings.instance.json
+      - ./two/config/fhir/logsettings.instance.json:/app/logsettings.instance.json
+      - ./shared/config/fhir/firelyserver-license.json:/app/firelyserver-license.json      
       - ./shared/config/fhir/plugins/:/app/plugins/
     networks:
       - "fhir-nuts"

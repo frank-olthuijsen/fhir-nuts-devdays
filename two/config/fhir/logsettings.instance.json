@@ -1,0 +1,50 @@
+﻿{
+  "Serilog": {
+    "Using": [
+      "Firely.Server"
+    ],
+    "MinimumLevel": {
+      "Default": "Error",
+      "Override": {
+        "Vonk.Server": "Information",
+        "Vonk.Core.Pluggability": "Information",
+        "Vonk.Core.Licensing": "Information",
+        "Vonk.Administration.Api.Import": "Information",
+        "Vonk.Repository.Generic": "Information",
+        "Vonk": "Warning",
+        "Nuts.Plugin": "Information"
+      }
+    },
+    "WriteTo": [
+      {
+        "Name": "Seq",
+        "Args": {
+          "serverUrl": "http://seq:5341",
+          "restrictedToMinimumLevel": "Verbose"
+        }
+      },
+      {
+        "Name": "Async",
+        "Args": {
+          "configure": [
+            {
+              "Name": "Console",
+              "Args": {
+                "restrictedToMinimumLevel": "Information",
+                "outputTemplate": "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [ReqId: {RequestId}] [{SourceContext}] {Message}{NewLine}{Exception}"
+              }
+            }
+          ]
+        }
+      }
+    ],
+    "Enrich": [
+      "FromLogContext",
+      "WithMachineName"
+    ],
+    "Properties": {
+      "Application": "fhir-two",
+      "Environment": "Development"
+    }
+  }
+}
