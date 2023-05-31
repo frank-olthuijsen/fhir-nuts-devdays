@@ -1,19 +1,21 @@
 # DevDays 2023: Nuts x FHIR
 
-This repo is part of the HL7 FHIR DevDays 2023 tutorial [FHIR x Nuts: How to combine FHIR and Nuts to create large-scale distributed networks for healthcare information exchange](https://www.devdays.com/share/?session=2975161).
+This repo is part of the [HL7 FHIR DevDays 2023](https://www.devdays.com/) tutorial [FHIR x Nuts: How to combine FHIR and Nuts to create large-scale distributed networks for healthcare information exchange](https://www.devdays.com/share/?session=2975161).
 
-The code in this repo is the outcome of the participation in the [Hackathon FHIR x NUTS bij HL7 Working Group meeting](https://www.youtube.com/watch?v=qeadC5w9oR4). As such, this code is by no means production ready. It is solely intended as a PoC. 
+The code in this repo is the outcome of participating in the [Hackathon FHIR x NUTS bij HL7 Working Group meeting](https://www.youtube.com/watch?v=qeadC5w9oR4). As such, **this code is by no means production ready**. It is solely intended as a PoC. There are still a lot of security holes to plug.
 
-However, due to the complexity of setting up and interacting with multiple Nuts nodes and FHIR servers, I believe that this repo can be of value to anyone wanting to learn more about/get started with the **Toepassing op Nuts BgZ**.
+However, due to the complexity of setting up and interacting with multiple Nuts nodes and FHIR servers, I believe that this repo can be of value to anyone wanting to learn more about/get started with the **Toepassing op Nuts: BgZ**.
 
 The repo consists of:
 
 * 1 Docker compose file that sets up 2 Nuts nodes, 2 Firely Server instances using SQLite and one instance of Seq.
-* 1 exported Postman collection and 2 exported Postman environments for settings up the Nuts nodes and FHIR servers.
+* 1 exported Postman collection and 2 exported Postman environments for setting up the Nuts nodes and Firely Servers.
 * 1 Visual Studio solution containing a Firely Server plugin that handles both the sending and receiving of a referral using a notified pull.
 * This readme file containing detailed instructions on how to setup all of the above.
 
 This repo was tested on both Ubuntu and Windows 10.
+
+Part of the repo is based on the [Nuts network local repo](https://github.com/nuts-foundation/nuts-network-local) of the Nuts foundation.
 
 ## 1. Installation
 
@@ -27,13 +29,26 @@ The starting point of this tutorial is cloning the [fhir-nuts-devdays](https://g
 
 `git clone https://github.com/frank-olthuijsen/fhir-nuts-devdays.git`
 
-### Postman
+### [Postman](https://www.postman.com/downloads/)
 
-In the root of the repo you will find a folder named `Postman`. In there are one exported Postman collection and two exported Postman environments. Please import all three of them. The Postman requests are grouped similar to the chapters in this readme.
+In the root of the repo you will find a folder named `Postman`. In there are 1 exported Postman collection and 2 exported Postman environments. Please import all 3 of them. The Postman requests are grouped in folders similar to the chapters in this readme.
 
-From now on we will refer the Postman collection as `Postman` and the environments as `Nuts-1` or `Nuts-2`.
+From now on we will refer to the Postman collection as `Postman` and the environments as `Nuts-1` and `Nuts-2`.
 
-### FHIR server
+### Nuts-plugin
+
+The referral process, both sending and receiving, is implemented using a [Firely Server-plugin](https://fire.ly/products/firely-server/plugins/). The plugin contains a custom operation named **$refer** to start the referall process and a prehandler that gets triggered when receiving a (notification) Task.
+
+1. Open `Nuts.sln` using your favorite C# IDE.
+2. Build the solution.
+
+The output is configured to be placed in:
+
+ `./shared/config/fhir/plugins`
+
+Please confirm the `plugins`-folder contains `Nuts.Plugin.dll`. The nesting-level within the folder is irrelevant.
+
+### [Firely Server](https://fire.ly/products/firely-server/)
 
 1. Navigate to https://simplifier.net/downloads/firely-server, log in and download an evaluation license for Firely Server using the **Download key**-button. Do not change the name and store the license file in: 
 
@@ -56,12 +71,20 @@ The following containers are now running:
 * [fhir-one](http://localhost:4080)
 * [fhir-two](http://localhost:4081)
 
-### Nuts node
+### [Nuts node](https://github.com/nuts-foundation/nuts-node)
 
 1. Inspect the status of each Nuts node:
 
 * [node-one](http://localhost:1323/status/diagnostics)
 * [node-two](http://localhost:2323/status/diagnostics)
+
+### [Seq](https://datalust.co/seq)
+
+Both Firely Server instances write their log output to Seq. Especially the output of the Nuts-plugin is useful since there is no UI to assist the referral process.
+
+The events in Seq can be viewed by opening: [http://localhost:8081/#/events](http://localhost:8081/#/events). The username is `admin` and the password is `password`.
+
+Please check the [pricing page](https://datalust.co/pricing) for the licensing details.
 
 ## 2. Vendor setup
 
@@ -217,6 +240,16 @@ A node operator must not blindly trust all the data is published over the networ
 
 ## 5. Flow
 
-1. Send out the referral:
+1. Check the contents of `fhir-two` to ensure it is empty:
+
+* [http://localhost:4081/Patient?_include=Patient:general-practitioner](http://localhost:4080/Patient?_include=Patient:general-practitioner)
+* [http://localhost:4081/Observation?code=http://snomed.info/sct|228273003](http://localhost:4081/Observation?code=http://snomed.info/sct|228273003)
+
+1. Open Seq to see the referral steps listed.
+2. Send out the referral:
 
 `Postman: 1. Send out referral notification`
+
+3. Rerun the queries from step 1. You will see that `fhir-two` now contains the same data as `fhir-one`.
+
+**That concludes this tutorial.**
