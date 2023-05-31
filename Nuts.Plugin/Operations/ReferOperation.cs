@@ -74,8 +74,8 @@ namespace Nuts.Plugin.Operations
                 //}
                 //_logger.LogInformation($"Access token obtained: {accessToken}");
 
-                // get the fhir endpoint of the sender
-                string? senderFhirEndpoint = await _nutsClient.GetEndpointAsync(receiverDid, "bgz-sender", "fhir"); // TODO: check
+                // get the fhir endpoint of the sender (us)
+                string? senderFhirEndpoint = await _nutsClient.GetEndpointAsync(senderDid, "bgz-sender", "fhir"); 
                 if (senderFhirEndpoint == null)
                 {
                     throw new Exception("Unable to retrieve FHIR endpoint of sender");

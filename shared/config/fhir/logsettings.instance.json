@@ -12,7 +12,7 @@
         "Vonk.Administration.Api.Import": "Information",
         "Vonk.Repository.Generic": "Information",
         "Vonk": "Warning",
-        "Nuts.Plugin.NutsPluginConfiguration": "Information"
+        "Nuts.Plugin": "Information"
       }
     },
     "WriteTo": [

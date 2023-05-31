@@ -172,8 +172,17 @@ namespace Nuts.Plugin.Handlers
                     }
 
                 }
-                
-                var selfFhirClient = new FhirClient("http://localhost:4081");
+
+                // get the fhir endpoint of the receiver (us, this works because we are also a sender)
+                string? receiverFhirEndpoint = await _nutsClient.GetEndpointAsync(receiverDid, "bgz-sender", "fhir"); 
+                if (receiverFhirEndpoint == null)
+                {
+                    throw new Exception("Unable to retrieve FHIR endpoint of receiver");
+                }
+                _logger.LogInformation($"Retrieved FHIR endpoint of receiver: {receiverFhirEndpoint}");
+
+
+                var selfFhirClient = new FhirClient(receiverFhirEndpoint);
                 await selfFhirClient.TransactionAsync(transactionBundle);
                 
                 _logger.LogInformation($"Successfully stored resources in Firely Server.");

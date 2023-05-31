@@ -31,25 +31,25 @@ services:
     container_name: fhir-one
     ports:
       - "4080:4080"
-    volumes:      
+    volumes:
       - ./one/config/fhir/appsettings.instance.json:/app/appsettings.instance.json
       - ./shared/config/fhir/firelyserver-license.json:/app/firelyserver-license.json
       - ./shared/config/fhir/logsettings.instance.json:/app/logsettings.instance.json
       - ./shared/config/fhir/plugins/:/app/plugins/
     networks:
       - "fhir-nuts"
-  # fhir-two:
-  #   image: firely/server:5.0.0
-  #   container_name: fhir-two
-  #   ports:
-  #     - "4081:4080"
-  #   volumes:
-  #     - ./two/config/fhir/appsettings.instance.json:/app/appsettings.instance.json
-      # - ./shared/config/fhir/firelyserver-license.json:/app/firelyserver-license.json
-      # - ./shared/config/fhir/logsettings.instance.json:/app/logsettings.instance.json
-      # - ./shared/config/fhir/plugins/:/app/plugins/
-  #   networks:
-  #     - "fhir-nuts"
+  fhir-two:
+    image: firely/server:5.0.0
+    container_name: fhir-two
+    ports:
+      - "4081:4080"
+    volumes:
+      - ./two/config/fhir/appsettings.instance.json:/app/appsettings.instance.json
+      - ./shared/config/fhir/firelyserver-license.json:/app/firelyserver-license.json
+      - ./shared/config/fhir/logsettings.instance.json:/app/logsettings.instance.json
+      - ./shared/config/fhir/plugins/:/app/plugins/
+    networks:
+      - "fhir-nuts"
   seq:
     image: datalust/seq
     container_name: seq
@@ -58,7 +58,7 @@ services:
       - "5341:5341"
     environment:
       - ACCEPT_EULA=Y
-      - SEQ_FIRSTRUN_ADMINPASSWORDHASH=FKPPttXNciL8WEbCRot8IXDsGaYreDBRqX7qVdX+kDv0bCpg/g== # --> 'password'
+      - SEQ_FIRSTRUN_ADMINPASSWORDHASH=FKPPttXNciL8WEbCRot8IXDsGaYreDBRqX7qVdX+kDv0bCpg/g==
     networks:
       - "fhir-nuts"
     deploy:
