@@ -93,6 +93,9 @@ namespace Nuts.Plugin.Operations
                     throw new Exception("Unable to send notification task");
                 }
                 _logger.LogInformation("Notification task sent successfully");
+
+                vonkContext.Arguments.HandleUnhandledArguments();
+                vonkContext.Response.HttpResult = 200;
             }
             catch (Exception ex)
             {

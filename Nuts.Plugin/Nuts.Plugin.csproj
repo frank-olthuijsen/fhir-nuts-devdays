@@ -4,7 +4,7 @@
     <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <BaseOutputPath>C:\Firely-Server\nuts-5.0.0\plugins</BaseOutputPath>
+    <BaseOutputPath>../shared/config/fhir/plugins</BaseOutputPath>
   </PropertyGroup>
 
   <ItemGroup>
