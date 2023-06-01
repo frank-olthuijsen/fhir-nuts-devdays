@@ -5,8 +5,7 @@
 
 /one/data
 /two/data
-/one/config/fhir/firelyserver-license.json
-/two/config/fhir/firelyserver-license.json
+/shared/config/fhir/firelyserver-license.json
 /resources
 /resources_old
 
