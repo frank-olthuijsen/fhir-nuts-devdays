@@ -52,7 +52,7 @@ Please confirm the `plugins`-folder contains `Nuts.Plugin.dll`. The nesting-leve
 
 1. Navigate to https://simplifier.net/downloads/firely-server, log in and download an evaluation license for Firely Server using the **Download key**-button. Do not change the name and store the license file in: 
 
-`fhir-nuts-devdays/shared/config/fhir`
+`./shared/config/fhir`
 
 2. Navigate to the root of the repo you cloned. It contains a file called `docker-compose.yml`. Run the following command:
 
