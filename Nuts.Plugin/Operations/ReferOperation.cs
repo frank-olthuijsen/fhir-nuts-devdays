@@ -49,10 +49,10 @@ namespace Nuts.Plugin.Operations
                 _logger.LogInformation($"Retrieved DID {receiverDid} for {receiverName}");
 
                 // create workflow task
-                // this step is skipped and instead we use a preset workflow task
+                // this step is skipped and instead we use a preloaded workflow task
                 //CreateWorkflowTask(); 
 
-                // create an authz credential
+                // create a Nuts authorization credential
                 string vcDid = await _nutsClient.CreateAuthorizationCredentialsAsync(senderDid, receiverDid, 1);
                 _logger.LogInformation($"Created authorization credential: {vcDid}");
 

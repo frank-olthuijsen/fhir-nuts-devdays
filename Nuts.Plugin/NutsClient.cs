@@ -19,6 +19,14 @@ namespace Nuts.Plugin
             _httpClient.BaseAddress = new Uri(nutsOptions.Value.NodeUrl); 
         }
 
+        /// <summary>
+        /// Creates a Nuts authorization credential
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="receiver"></param>
+        /// <param name="taskId"></param>
+        /// <returns></returns>
+        /// <see href="https://nuts-foundation.gitbook.io/drafts/rfc/rfc014-authorization-credential"/>
         public async Task<string> CreateAuthorizationCredentialsAsync(string sender, string receiver, int taskId)
         {
             var searchJson = string.Format(ReferTemplates.CREATE_VC_TEMPLATE, sender, receiver, taskId);
@@ -64,6 +72,13 @@ namespace Nuts.Plugin
             return null;
         }
 
+        /// <summary>
+        /// Retrieves the endpoint with the specified endpointType from the specified compound service
+        /// </summary>
+        /// <param name="did"></param>
+        /// <param name="compoundService"></param>
+        /// <param name="endpointType"></param>
+        /// <returns></returns>
         public async Task<string?> GetEndpointAsync(string did, string compoundService, string endpointType)
         {
             if (string.IsNullOrEmpty(did) ||
@@ -87,6 +102,12 @@ namespace Nuts.Plugin
             return node?.ToString();
         }
 
+        /// <summary>
+        /// Creates a JWT Grant and uses it as authorization grant to get an access token from the authorizer
+        /// </summary>
+        /// <param name="authorizer"></param>
+        /// <param name="requester"></param>
+        /// <returns></returns>
         public async Task<string?> GetAccessTokenAsync(string authorizer, string requester)
         {
             var searchJson = string.Format(ReferTemplates.GET_AT_TEMPLATE, authorizer, requester);
@@ -113,6 +134,13 @@ namespace Nuts.Plugin
             }
         }
 
+        /// <summary>
+        /// Creates a JWT Grant and uses it as authorization grant to get an access token from the authorizer
+        /// </summary>
+        /// <param name="authorizer"></param>
+        /// <param name="requester"></param>
+        /// <param name="authorization"></param>
+        /// <returns></returns>
         public async Task<string?> GetAccessTokenAsync(string authorizer, string requester, string authorization)
         {
             var searchJson = string.Format(ReferTemplates.GET_AT_EX_TEMPLATE, authorizer, requester, authorization);
@@ -132,10 +160,17 @@ namespace Nuts.Plugin
             return node?.ToString();
         }
 
+        /// <summary>
+        /// Returns the resolved verifiable credential, regardless of its revocation/trust state
+        /// </summary>
+        /// <param name="vcDid"></param>
+        /// <returns></returns>
+        /// <see href="https://nuts-foundation.gitbook.io/v1/rfc/rfc011-verifiable-credential"/>
         public async Task<string?> GetVerifiableCredentialAsync(string vcDid)
         {
             vcDid = vcDid.Replace("#", "%23");
 
+            // for the PoC a retry mechanism has been created since it takes 1-2 seconds for the nodes to synchronize
             int retry = 0;
             int maxAttempts = 6;
             while (retry < maxAttempts)
