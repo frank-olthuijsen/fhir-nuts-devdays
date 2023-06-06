@@ -2,7 +2,7 @@
 
 This repo is part of the [HL7 FHIR DevDays 2023](https://www.devdays.com/) tutorial [FHIR x Nuts: How to combine FHIR and Nuts to create large-scale distributed networks for healthcare information exchange](https://www.devdays.com/share/?session=2975161).
 
-The code in this repo is the outcome of participating in the [Hackathon FHIR x NUTS bij HL7 Working Group meeting](https://www.youtube.com/watch?v=qeadC5w9oR4). As such, **this code is by no means production ready**. It is solely intended as a PoC. There are still a lot of security holes to plug.
+The code in this repo is the outcome of participating in the [Hackathon FHIR x NUTS bij HL7 Working Group meeting](https://www.youtube.com/watch?v=qeadC5w9oR4). As such, **this code is by no means production ready**. It is solely intended as a PoC. It does not meet the necessary security standards and should not be used in a production environment.
 
 However, due to the complexity of setting up and interacting with multiple Nuts nodes and FHIR servers, I believe that this repo can be of value to anyone wanting to learn more about/get started with the **Toepassing op Nuts: BgZ**.
 
@@ -37,7 +37,7 @@ From now on we will refer to the Postman collection as `Postman` and the environ
 
 ### Nuts-plugin
 
-The referral process, both sending and receiving, is implemented using a [Firely Server-plugin](https://fire.ly/products/firely-server/plugins/). The plugin contains a custom operation named **$refer** to start the referall process and a prehandler that gets triggered when receiving a (notification) Task.
+The referral process, both sending and receiving, is implemented using a [Firely Server-plugin](https://fire.ly/products/firely-server/plugins/). The plugin contains a custom operation named **$refer** to start the referral process and a prehandler that gets triggered when receiving a (notification) Task.
 
 1. Open `Nuts.sln` using your favorite C# IDE.
 2. Build the solution.
@@ -110,7 +110,7 @@ Repeat the steps below for each Postman environment (i.e. Vendor): `nuts-1` and 
 
 ```yaml
 network:
-  nodedid: did:nuts:8vK61KJLErLVsPoTL8H7sAz8d2w2wDQMoVvnhQmkGf6d
+  nodedid: did:nuts:5gTvUacW5QVXW4hgFnJYe5gb5uEdo6WUSeYj5p6RABpJ
 ```
 
 4. [Set the vendor contact information](https://nuts-node.readthedocs.io/en/stable/pages/getting-started/4-connecting-crm.html#setting-vendor-contact-information)
@@ -131,7 +131,7 @@ Next we will add a number of services to the vendor DID documents. This will all
 
 3. Create an OAuth service
 
-`B3. Add an OAuth service to the vendor DID`
+`Postman: B3. Add an OAuth service to the vendor DID`
 
 4. Create a notification service
 
@@ -204,20 +204,6 @@ Organizations can be found on the network and endpoints have been defined. Now i
 
 `Postman: z. Search for organization by name`
 
-### [G. Trusting other vendors as issuer](https://nuts-node.readthedocs.io/en/stable/pages/getting-started/4-connecting-crm.html#trusting-other-vendors-as-issuer)
-
-A node operator must not blindly trust all the data is published over the network. Before credentials can be found, the issuer has to be trusted. By default, no issuers are trusted.
-
-1. List the untrusted vendors
-
-`G1. List untrusted vendors`
-
-2. Add the **other** node as a trusted vendor
-
-`Postman: G2. Trust the other vendor`
-
-3. Repeat step G1 to ensure that the vendor is trusted.
-
 ### Important
 
 **Before continuing with the next steps**:
@@ -226,27 +212,43 @@ A node operator must not blindly trust all the data is published over the networ
     1. Change the environment in Postman from `Nuts-1` to `Nuts-2`
     2. Go back to the step C1 and work through all of the steps
 
+### [G. Trusting other vendors as issuer](https://nuts-node.readthedocs.io/en/stable/pages/getting-started/4-connecting-crm.html#trusting-other-vendors-as-issuer)
+
+A node operator must not blindly trust all the data is published over the network. Before credentials can be found, the issuer has to be trusted. By default, no issuers are trusted.
+
+1. List the untrusted vendors
+
+`Postman: G1. List untrusted vendors`
+
+2. Add the **other** node as a trusted vendor
+
+`Postman: G2. Trust the other vendor`
+
+3. Repeat step G1 to ensure that the vendor is trusted.
+
+4. Repeat G1 to G3 for the other vendor (i.e. change the environment in Postman)
+
 ## 4. FHIR setup
 
-1. Change the Postman environment to `Nuts-1`. All of the steps below need to be executed for `Nuts-1` only,
+1. Change the Postman environment to `Nuts-1`. All of the steps below need to be executed for `Nuts-1` only.
 
-1. Load the resources to exchange into `fhir-one`:
+2. Load the resources to exchange into `fhir-one`:
 
 `Postman: 1. Load resources`
 
-2. Load the workflow Task to exchange into `fhir-one`:
+3. Load the workflow Task to exchange into `fhir-one`:
 
-`Postman > Nuts-1 > 2. FHIR setup > 2. Create workflow Task`
+`Postman: 2. Create workflow Task`
 
 ## 5. Flow
 
 1. Check the contents of `fhir-two` to ensure it is empty:
 
-* [http://localhost:4081/Patient?_include=Patient:general-practitioner](http://localhost:4080/Patient?_include=Patient:general-practitioner)
+* [http://localhost:4081/Patient?_include=Patient:general-practitioner](http://localhost:4081/Patient?_include=Patient:general-practitioner)
 * [http://localhost:4081/Observation?code=http://snomed.info/sct|228273003](http://localhost:4081/Observation?code=http://snomed.info/sct|228273003)
 
-1. Open Seq to see the referral steps listed.
-2. Send out the referral:
+2. Open Seq to see the referral steps listed.
+3. Send out the referral:
 
 `Postman: 1. Send out referral notification`
 
