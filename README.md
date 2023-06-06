@@ -255,3 +255,9 @@ A node operator must not blindly trust all the data is published over the networ
 3. Rerun the queries from step 1. You will see that `fhir-two` now contains the same data as `fhir-one`.
 
 **That concludes this tutorial.**
+
+## 6. Next steps
+
+The Nuts documentation contains a ["Hello World" on Docker tutorial](https://nuts-node.readthedocs.io/en/stable/pages/getting-started/0-hello-world-docker.html). Besides Nuts nodes and FHIR servers it also contains a UI for both a Demo EHR and a Nuts Admin interface.
+
+In order to run a Nuts node in production, additional security steps are needed in the [Nuts configuration](https://nuts-node.readthedocs.io/en/stable/pages/getting-started/3-configure-your-node.html#node-tls-certificate).
