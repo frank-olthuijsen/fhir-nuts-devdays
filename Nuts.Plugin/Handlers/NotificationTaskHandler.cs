@@ -77,7 +77,7 @@ namespace Nuts.Plugin.Handlers
                 ResourceReference? basedOn = notificationTask.BasedOn.SingleOrDefault();
                 if (basedOn == null)
                 {
-                    throw new Exception("More than one basedOn specified");
+                    throw new Exception("None or more than one basedOn specified");
                 }
 
                 _logger.LogInformation($"Workflow task found in notification task: {basedOn}");
@@ -86,10 +86,10 @@ namespace Nuts.Plugin.Handlers
                 FhirString? vcDid = GetVerifiableCredentialDid(notificationTask);
                 if (vcDid == null)
                 {
-                    throw new Exception("Verifiable credential did not found in notification task");
+                    throw new Exception("Verifiable credential DID not found in notification task");
                 }
 
-                _logger.LogInformation($"Verifiable credential did found: {vcDid}");
+                _logger.LogInformation($"Verifiable credential DID found: {vcDid}");
 
                 // obtain the verifiable credential by its DID
                 string? vc = await _nutsClient.GetVerifiableCredentialAsync(vcDid.Value);
@@ -158,7 +158,7 @@ namespace Nuts.Plugin.Handlers
                                 Url = entry.Resource.TypeName
                             };
 
-                            // remove duplicates
+                            // prevent duplicates
                             Bundle.EntryComponent? existing = transactionBundle.Entry.SingleOrDefault(e =>
                                 e.Resource.TypeName == entry.Resource.TypeName
                                 && e.Resource.Id == entry.Resource.Id);
@@ -191,7 +191,6 @@ namespace Nuts.Plugin.Handlers
             {
                 _logger.LogError($"An error occurred during the handling of the notification task: {ex.Message}");
             }
-            _ = await Task.FromResult(true);
         }
 
         private async Task<Bundle?> PerformSearchAsync(FhirClient fhirClient, string search)
@@ -236,10 +235,10 @@ namespace Nuts.Plugin.Handlers
             return null;
         }
 
-        private async Task<bool> IntrospectTokenAsync(object token)
+        private Task<bool> IntrospectTokenAsync(object token)
         {
             // TODO: implement
-            return _ = await Task.FromResult(true);
+            return _ = Task.FromResult(true);
         }
 
         private string? GetToken(IVonkContext vonkContext)

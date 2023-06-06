@@ -66,6 +66,8 @@ namespace Nuts.Plugin
                 JsonNode? vcNode = vc["verifiableCredential"];
                 JsonNode? subjectNode = vcNode["credentialSubject"];
                 JsonNode? idNode = subjectNode["id"];
+
+                // for simplicity sake we take the first match
                 return idNode.ToString();
             }
 

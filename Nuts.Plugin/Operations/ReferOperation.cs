@@ -14,6 +14,9 @@ namespace Nuts.Plugin.Operations
         private readonly NutsClient _nutsClient;
         private readonly IOptions<NutsOptions> _nutsOptions;
 
+        // this is the ID of the workflow Task added to the sender FHIR server using the Postman collection
+        private const string WorkflowTaskId = "eb73e02a-3bd0-46f6-a66d-b0ecb7720d47";
+
         public ReferOperation(ILogger<ReferOperation> logger, 
             NutsClient nutsClient,
             IOptions<NutsOptions> nutsOptions)
@@ -101,8 +104,6 @@ namespace Nuts.Plugin.Operations
             {
                 _logger.LogError($"An error occurred during the execution of $refer: {ex.Message}");
             }
-
-            _ = await Task.FromResult(true);
         }
         
         private async Task<Hl7.Fhir.Model.Task?> SendNotificationAsync(string notificationEndpoint, string accessToken, Hl7.Fhir.Model.Task task)
@@ -120,7 +121,7 @@ namespace Nuts.Plugin.Operations
             {
                 Status = Hl7.Fhir.Model.Task.TaskStatus.Requested,
                 Intent = RequestIntent.Proposal,
-                BasedOn = new List<ResourceReference> {new("Task/eb73e02a-3bd0-46f6-a66d-b0ecb7720d47")} // based on preloaded WorkflowTask
+                BasedOn = new List<ResourceReference> {new($"Task/{WorkflowTaskId}")} // based on preloaded WorkflowTask
             };
 
             task.Requester = new Hl7.Fhir.Model.Task.RequesterComponent();
@@ -153,7 +154,7 @@ namespace Nuts.Plugin.Operations
             var taskInput = new Hl7.Fhir.Model.Task.ParameterComponent
             {
                 Type = new CodeableConcept("http://xxx.nl/fhir/CodeSystem/TaskParameterType", "workflow-task"),
-                Value = new ResourceReference("Task/eb73e02a-3bd0-46f6-a66d-b0ecb7720d47")
+                Value = new ResourceReference($"Task/{WorkflowTaskId}")
             };
             task.Input.Add(taskInput);
             
